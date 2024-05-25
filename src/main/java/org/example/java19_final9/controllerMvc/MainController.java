@@ -3,7 +3,7 @@ package org.example.java19_final9.controllerMvc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.java19_final9.dto.TransactionDto;
+import org.example.java19_final9.dto.TransactionToUserDto;
 import org.example.java19_final9.dto.UserImageDto;
 import org.example.java19_final9.service.TransactionService;
 import org.example.java19_final9.service.UserImageService;
@@ -58,12 +58,12 @@ public class MainController {
                 if (receiver.equals(auth.getName())) {
                     return "redirect:/?account=yourself";
                 } else {
-                    TransactionDto transactionDto = TransactionDto.builder()
-                            .senderAccount(auth.getName())
-                            .receiverAccount(receiver)
+                    TransactionToUserDto transactionToUserDto = TransactionToUserDto.builder()
+                            .senderAccount(Integer.valueOf(auth.getName()))
+                            .receiverAccount(Integer.valueOf(receiver))
                             .amount(amount)
                             .build();
-                    transactionService.saveUserPayment(transactionDto);
+                    transactionService.saveUserPayment(transactionToUserDto);
                     return "redirect:/?account=success";
                 }
             }

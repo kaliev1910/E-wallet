@@ -7,9 +7,10 @@ import java.sql.Timestamp;
 
 @Data
 @Builder
-public class TransactionDto {
-    private String senderAccount;
-    private String receiverAccount;
+public class TransactionToUserDto {
+    private Integer senderAccount;
+    private int transactionType;
+    private Integer receiverAccount;
     private int amount;
     private Timestamp actDate;
 }

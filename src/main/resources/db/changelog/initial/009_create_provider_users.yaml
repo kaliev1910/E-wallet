@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 038-create-transaction-table
+      id: 039-create-provider_users-table
       author: kaliev1910
       changes:
         - createTable:
-            tableName: transactions
+            tableName: provider_users
             columns:
               - column:
                   name: id
@@ -14,27 +14,17 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: sender_id
+                  name: provider_id
                   type: int
                   constraints:
+                    foreignKeyName: fk_pr_provider
                     nullable: false
-                    foreignKeyName: fk_transaction_sender
-                    references: users(id)
+                    references: providers(id)
+
               - column:
-                  name: destination_account
+                  name: balance
                   type: int
-                  constraints:
-                    nullable: false
+
               - column:
-                  name: amount
+                  name: user_account
                   type: int
-              - column:
-                  name: transaction_type
-                  type: int
-              - column:
-                  name: act_date
-                  type: TIMESTAMP
-
-
-
-

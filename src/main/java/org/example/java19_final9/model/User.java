@@ -40,9 +40,6 @@ public class User implements UserDetails {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "sender")
     private List<Transaction> senders;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "receiver")
-    private List<Transaction> receivers;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Phone> phones;
 

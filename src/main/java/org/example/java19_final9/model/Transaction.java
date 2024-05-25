@@ -21,12 +21,9 @@ public class Transaction {
     @JoinColumn(name = "sender_id")
     private User sender;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "receiver_id")
-    private User receiver;
 
     private int transactionType;
-    private int destination;
+    private int destinationAccount;
     private int amount;
 
 
