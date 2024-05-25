@@ -2,7 +2,7 @@ package org.example.java19_final9.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.java19_final9.dto.TransactionToUserDto;
+import org.example.java19_final9.dto.TransactionDto;
 import org.example.java19_final9.model.Transaction;
 import org.example.java19_final9.model.User;
 import org.example.java19_final9.repository.TransactionRepository;
@@ -21,25 +21,28 @@ public class TransactionService {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    public void saveUserPayment(TransactionToUserDto transactionToUserDto) {
-        if (transactionToUserDto.getTransactionType() == 1) {
+    public void savePayment(TransactionDto transactionDto) {
+        if (transactionDto.getTransactionType() == 1) {
             Transaction transaction = Transaction.builder()
-                    .sender(userRepository.findUserByAccount(transactionToUserDto.getSenderAccount().toString()).get())
-                    .destinationAccount(Integer.parseInt(userRepository.findUserByAccount(transactionToUserDto.getSenderAccount().toString()).get().getAccount()))
-                    .amount(transactionToUserDto.getAmount())
+                    .sender(userRepository.findUserByAccount(transactionDto.getSenderAccount().toString()).get())
+                    .destinationAccount(Integer.parseInt(userRepository.findUserByAccount(transactionDto.getSenderAccount().toString()).get().getAccount()))
+                    .amount(transactionDto.getAmount())
                     .actDate(new Timestamp(System.currentTimeMillis()))
                     .build();
             transactionRepository.save(transaction);
-            userService.subMoney(transactionToUserDto.getAmount(), transactionToUserDto.getSenderAccount().toString(), transactionToUserDto.getReceiverAccount().toString());
+            userService.subMoney(transactionDto.getAmount(), transactionDto.getSenderAccount().toString(), transactionDto.getReceiverAccount().toString());
+        }
+        else if (transactionDto.getTransactionType() == 2) {
+
         }
 
     }
 
-    public List<TransactionToUserDto> getUserTransaction(String account) {
+    public List<TransactionDto> getUserTransaction(String account) {
         User user = userService.getUserByAccount(account).get();
         List<Transaction> transactions = transactionRepository.findTransactionsBySenderId(user.getId());
         return transactions.stream()
-                .map(e -> TransactionToUserDto.builder()
+                .map(e -> TransactionDto.builder()
                         .senderAccount(Integer.valueOf(e.getSender().getAccount()))
                         .receiverAccount(e.getDestinationAccount())
                         .amount(e.getAmount())

@@ -18,6 +18,7 @@ public class ProviderUsers {
     @ManyToOne(fetch = FetchType.LAZY)
     private Provider provider;
     private int balance;
-    private int userAccount;
+    @Column(name = "user_phone")
+    private int userPhone;
 
 }

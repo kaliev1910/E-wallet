@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ServiceService {
+public class ProviderService {
     private final ServiceRepository serviceRepository;
 
     public List<ProviderDto> getAllServices() {

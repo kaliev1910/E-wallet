@@ -1,6 +1,6 @@
 package org.example.java19_final9.controllerMvc;
 
-import org.example.java19_final9.dto.TransactionToUserDto;
+import org.example.java19_final9.dto.TransactionDto;
 import org.example.java19_final9.service.TransactionService;
 import org.example.java19_final9.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class ProfileController {
     @GetMapping("/profile")
     public String getHomePage(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<TransactionToUserDto> transactions=transactionService.getUserTransaction(auth.getName());
+        List<TransactionDto> transactions=transactionService.getUserTransaction(auth.getName());
         model.addAttribute("transactions",transactions);
         model.addAttribute("user",userService.mapToUserDto(userService.getUserByAccount(auth.getName()).get()));
         return "main/profile";

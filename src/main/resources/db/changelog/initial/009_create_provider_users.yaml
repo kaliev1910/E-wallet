@@ -26,5 +26,5 @@ databaseChangeLog:
                   type: int
 
               - column:
-                  name: user_account
+                  name: user_phone
                   type: int
