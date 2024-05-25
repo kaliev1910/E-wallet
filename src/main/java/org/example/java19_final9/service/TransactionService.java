@@ -27,7 +27,7 @@ public class TransactionService {
         if (transactionDto.getTransactionType() == 1) {
             Transaction transaction = Transaction.builder()
                     .sender(userRepository.findUserByAccount(transactionDto.getSenderAccount().toString()).get())
-                    .destinationAccount(Integer.parseInt(userRepository.findUserByAccount(transactionDto.getSenderAccount().toString()).get().getAccount()))
+                    .destinationAccount(Integer.parseInt(userRepository.findUserByAccount(transactionDto.getReceiverAccount().toString()).get().getAccount()))
                     .amount(transactionDto.getAmount())
                     .transactionType(transactionDto.getTransactionType())
                     .actDate(new Timestamp(System.currentTimeMillis()))
