@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: added_table_for_user_image
+      author: kaliev1910
+      changes:
+        - createTable:
+            tableName: user_images
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: int
+              - column:
+                  name: file_name
+                  type: VARCHAR(255)
+            foreignKeyConstraints:
+              - foreignKeyConstraint:
+                  name: mfk_user_id
+                  baseTableName: user_images
+                  baseColumnNames: user_id
+                  referencedTableName: users
+                  referencedColumnNames: id

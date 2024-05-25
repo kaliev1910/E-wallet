@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: insertDataAuthority
+      author: kaliev1910
+      changes:
+        - sql:
+            comment: Insert data into authority
+            sql: |
+              insert into authorities (authority)
+              values('FULL'), ('READ_ONLY');
+
+  - changeSet:
+      id: insertDataRoles
+      author: kaliev1910
+      changes:
+        - sql:
+            comment: Insert data into roles
+            sql: |
+              insert into roles(role, authority_id)
+              values ('USER', (select id from authorities where authority = 'FULL')),
+                ('ADMIN', (select id from authorities where authority = 'FULL'));
+  - changeSet:
+      id: insertDataUsers
+      author: kaliev1910
+      changes:
+        - sql:
+            sql: |
+              insert into users(email,password, enabled, role_id, account,balance)
+              VALUES (
+                'qwe@qwe.qwe', 
+                '$2a$12$WB2YUbFcCN0tm44SBcKUjua9yiFBsfB3vW02IjuwzY7HGtlQIKzy2', 
+                TRUE,
+                 1,
+                '777888',
+                 1000
+              ),
+              (
+                'ewq@ewq.com',
+                '$2a$12$WB2YUbFcCN0tm44SBcKUjua9yiFBsfB3vW02IjuwzY7HGtlQIKzy2',
+                TRUE,
+                 1,
+                '777999',
+                1000
+              );

@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert into providers
+      author: kaliev1910
+      changes:
+        - sql:
+            sql: |
+              insert into providers(provider)
+              VALUES (
+                'Megacom'
+              ),
+              (
+                'Electricity'
+              ),
+              (
+                'Attractor school'
+              );

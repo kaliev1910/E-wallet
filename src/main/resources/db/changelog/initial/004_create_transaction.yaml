@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: 038-create-transaction-table
+      author: kaliev1910
+      changes:
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: sender_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transaction_sender
+                    references: users(id)
+              - column:
+                  name: destination
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transaction_destination
+                    references: users(id)
+              - column:
+                  name: amount
+                  type: int
+              - column:
+                  name: act_date
+                  type: TIMESTAMP
+
+
+
+
