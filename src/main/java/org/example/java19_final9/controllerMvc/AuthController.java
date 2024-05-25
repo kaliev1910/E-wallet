@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.View;
 
 import java.io.UnsupportedEncodingException;
 
@@ -21,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 public class AuthController {
 
     private final UserService userService;
+    private final View error;
 
 
     @GetMapping("/register")
@@ -66,7 +68,10 @@ public class AuthController {
 
 
     @GetMapping("/login")
-    public String login() {
+    public String login(@RequestParam (name = "error", required = false)String error, Model model ) {
+        if ( error != null  ) {
+            model.addAttribute("error", "Invalid username or password.");
+        }
         return "auth/login";
     }
     @GetMapping("/forgot")

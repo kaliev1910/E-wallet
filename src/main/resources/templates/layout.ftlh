@@ -22,14 +22,8 @@
             <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><@spring.message 'navbar.navi.home'/></a>
+                        <a class="nav-link" href="/profile">Profile</a>
                     </li>
-                    <#if username??>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/service"><@spring.message 'service'/></a>
-                        </li>
-                    </#if>
-
                 </ul>
 
                 <ul class="navbar-nav">

@@ -88,5 +88,8 @@ public class MainController {
         userImageService.uploadImage(userImageDto);
         return "redirect:/profile";
     }
-
+    @GetMapping("/error")
+    public String showAccessDeniedPage() {
+        return "/errors/accessDenied";
+    }
 }

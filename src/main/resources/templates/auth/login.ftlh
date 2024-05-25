@@ -11,7 +11,9 @@
                         <img class="img-fluid rounded mx-auto my-4" loading="lazy"
                              src="https://media.istockphoto.com/id/1344688156/photo/portrait-of-a-man-using-a-computer-in-a-modern-office.jpg?s=2048x2048&w=is&k=20&c=oMKjemhoTnRtj_l8n4hhXP7vWp4atKZIW25B4yTaYgM="
                              style="max-width: 100%; height: auto;" alt="BootstrapBrain Logo">
-                        <p class="mb-0">Not a member yet? <a href="/register" class="link-secondary text-decoration-none">Register now</a></p>
+                        <p class="mb-0">Not a member yet? <a href="/register"
+                                                             class="link-secondary text-decoration-none">Register
+                                now</a></p>
                     </div>
                 </div>
 
@@ -24,6 +26,10 @@
                                 </div>
                             </div>
                         </div>
+                        <#if error??>
+                            <b class="error">${error}</b>
+                        </#if>
+
                         <form action="/login" method="post" id="login-form" class="needs-validation" novalidate>
                             <#if _csrf??>
                                 <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
