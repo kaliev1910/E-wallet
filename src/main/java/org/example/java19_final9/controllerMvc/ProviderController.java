@@ -1,8 +1,12 @@
 package org.example.java19_final9.controllerMvc;
 
+import lombok.RequiredArgsConstructor;
+import org.example.java19_final9.dto.PaymentForService;
+import org.example.java19_final9.dto.ProviderUserDto;
 import org.example.java19_final9.service.ProviderService;
 import org.example.java19_final9.service.UserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +24,10 @@ public class ProviderController {
     }
 
     @GetMapping("/service/{serviceId}")
-    public String perform(@PathVariable int serviceId, Model model) {
-        if (providerService.getServiceById(serviceId) != null) {
-            model.addAttribute("service", providerService.getServiceById(serviceId));
+    public String perform(@PathVariable int serviceId, Authentication auth, Model model) {
+        if (providerService.getProviderById(serviceId) != null) {
+            model.addAttribute("service", providerService.getProviderById(serviceId));
+
             return "main/perform";
         } else {
             return "main/error";
@@ -31,50 +36,49 @@ public class ProviderController {
 
     @GetMapping("/service/{serviceId}/subscribe")
     public String subscribe(@PathVariable int serviceId, Model model) {
-        if (providerService.getServiceById(serviceId) != null) {
-            model.addAttribute("service", providerService.getServiceById(serviceId));
+        if (providerService.getProviderById(serviceId) != null) {
+            model.addAttribute("service", providerService.getProviderById(serviceId));
             return "main/subscribe";
         } else {
             return "main/error";
         }
     }
 
-//    @PostMapping("/service/{serviceId}/subscribe")
-//    @ResponseStatus(HttpStatus.SEE_OTHER)
-//    public String postSubscribe(
-//            @RequestParam(name = "phone") String phone,
-//            @PathVariable int serviceId
-//    ) {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        int id = userService.getUserByAccount(auth.getName()).get().getId();
-//        PhoneDto phoneDto = PhoneDto.builder()
-//                .phone(phone)
-//                .userId(id)
-//                .build();
-//        phoneService.save(phoneDto);
-//        return "redirect:/service/" + serviceId;
-//
-//    }
-//
-//    @PostMapping("/{serviceId}")
-//    @ResponseStatus(HttpStatus.SEE_OTHER)
-//    public String withdraw(
-//            @RequestParam(name = "phone") String phone,
-//            @RequestParam(name = "balance") int balance,
-//            @PathVariable int serviceId
-//    ) {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        int id = userService.getUserByAccount(auth.getName()).get().getId();
-//        SubscriberDto subscriberDto = SubscriberDto.builder()
-//                .balance(balance)
-//                .serviceId(serviceId)
-//                .phone(phone)
-//                .build();
-//        System.out.println("PHONE"+phone);
-//        subscriberService.save(subscriberDto, auth.getName());
-//        return "redirect:/profile";
-//
-//    }
+    @PostMapping("/service/{serviceId}/subscribe")
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String addProviderUser(
+            @RequestParam(name = "phone") int phone,
+            @PathVariable int serviceId, Authentication auth
+    ) {
+        int id = userService.getUserByAccount(auth.getName()).get().getId();
+        ProviderUserDto providerUserDto = ProviderUserDto.builder()
+                .userPhone(phone)
+                .providerId(serviceId)
+                .build();
+        providerService.addProviderUser(providerUserDto);
+        return "redirect:/service/" + serviceId;
+
+    }
+
+    @PostMapping("/service/{serviceId}")
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String withdraw(
+            @RequestParam(name = "phone") int phone,
+            @RequestParam(name = "balance") int balance,
+            @PathVariable int serviceId, Model model, Authentication auth
+    ) {
+
+        int id = userService.getUserByAccount(auth.getName()).get().getId();
+        PaymentForService providerUserDto = PaymentForService.builder()
+                .amount(balance)
+                .providerId(serviceId)
+                .userPhone(phone)
+                .build();
+        String response = providerService.replenishProviderUser(providerUserDto);
+        model.addAttribute("response", response);
+        return "redirect:/profile";
+
+    }
 
 
 }

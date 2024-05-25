@@ -3,14 +3,14 @@
 <@main.layout>
 
     <div class="container mt-5">
-        <form>
+        <form action="/service/${serviceId}">
             <div class="mb-3">
                 <label for="amount" class="form-label">Amount of Money:</label>
                 <input type="number" class="form-control" id="amount" name="balance" min="0" required>
             </div>
             <div class="mb-3">
-                <label for="account" class="form-label">User Phone</label>
-                <input type="text" class="form-control" id="account" name="phone" required>
+                <label for="account" class="form-label">User Phone of Provider</label>
+                <input type="number" class="form-control" id="account" name="phone" required>
             </div>
             <button type="submit" class="btn btn-primary">Transfer Money</button>
         </form>

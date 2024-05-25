@@ -20,7 +20,7 @@ public class Provider {
     private String provider;
 
     @OneToMany(mappedBy = "provider")
-    private List<ProviderUsers> providerUsers;
+    private List<ProviderUser> providerUsers;
 
 
 }

@@ -1,15 +1,16 @@
 package org.example.java19_final9.service;
 
 
-import org.example.java19_final9.dto.UserDto;
-import org.example.java19_final9.enums.AccountType;
-import org.example.java19_final9.model.User;
-import org.example.java19_final9.repository.UserRepository;
-import org.example.java19_final9.util.Utility;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.java19_final9.dto.UserDto;
+import org.example.java19_final9.enums.AccountType;
+import org.example.java19_final9.model.User;
+import org.example.java19_final9.repository.RoleRepository;
+import org.example.java19_final9.repository.UserRepository;
+import org.example.java19_final9.util.Utility;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +32,7 @@ public class UserService {
     private final PasswordEncoder encoder;
     private final RoleService roleService;
     private final EmailService emailService;
+    private final RoleRepository roleRepository;
 
 
     public List<UserDto> getAllUsers() {
@@ -39,7 +41,7 @@ public class UserService {
         List<UserDto> userDtos = users.stream()
                 .map(e -> UserDto.builder()
                         .id(e.getId())
-                        .accountType(getAccountType(e.getRole().getId().intValue()))
+                        .accountType(AccountType.USER)
                         .password(e.getPassword())
                         .email(e.getEmail())
                         .build()
@@ -99,17 +101,71 @@ public class UserService {
     }
 
 
+//    public int save(UserDto userDto) {
+//        log.info("The user:{} is saved!", userDto.getEmail());
+//        return userRepository.save(User.builder()
+//                .email(userDto.getEmail())
+//                .password(encoder.encode(userDto.getPassword()))
+//                .enabled(true)
+//                .account(userDto.getAccount())
+//                .balance(1000)
+//                .build()
+//
+//
+//        ).getId();
+//
+//    }
     public int save(UserDto userDto) {
-        log.info("The user:{} is saved!", userDto.getEmail());
-        return userRepository.save(User.builder()
-                .email(userDto.getEmail())
-                .password(encoder.encode(userDto.getPassword()))
-                .enabled(true)
-                .role(roleService.getRoleById(1))
-                .account(userDto.getAccount())
-                .balance(1000)
-                .build()).getId();
+        User user;
+        try {
+            user = fromDto(userDto);
+            user.setPassword(encoder.encode(userDto.getPassword()));
+            user.setEnabled(true);
+            user.setAccount(userDto.getAccount());
+           User savedUser =  userRepository.save(user);
 
+            Optional<User> newUser = userRepository.findUserByAccount(user.getAccount());
+
+
+            if (newUser.isPresent()) {
+                if (user.getAccountType().equalsIgnoreCase(AccountType.USER.getValue())) {
+                    roleRepository.addUserRole(1,savedUser.getId());
+                }
+                if (user.getAccountType().equalsIgnoreCase(AccountType.ADMIN.getValue())) {
+                    roleRepository.addUserRole(2,savedUser.getId());
+                }
+
+                log.info("User with email {} has been created", userDto.getAccount());
+                return user.getId();
+            } else {
+                log.info("User could not be created");
+                return 0;
+            }
+        } catch (Exception e) {
+            log.error("Error while trying to create user", e);
+            throw e;
+        }
+    }
+    protected UserDto toDto(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .accountType(AccountType.USER)
+                .account(user.getAccount())
+
+                .build();
+    }
+
+    protected static User fromDto(UserDto user) {
+        return User.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .accountType(user.getAccountType().getValue())
+                .account(user.getAccount())
+                .enabled(true)
+                .build();
     }
 
 
@@ -118,7 +174,7 @@ public class UserService {
             return UserDto.builder()
                     .id(user.getId())
                     .email(user.getEmail())
-                    .accountType(getAccountType(user.getRole().getId().intValue()))
+                    .accountType(AccountType.USER)
                     .password(user.getPassword())
                     .resetPasswordToken(user.getResetPasswordToken())
                     .account(user.getAccount())

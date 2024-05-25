@@ -5,21 +5,28 @@ import lombok.*;
 
 import java.util.List;
 
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+
 @Getter
 @Setter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 @Entity
-@Table(name = "roles")
+@Table(name = "ROLES")
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String role;
-    private Long authorityId;
+    @Column(name = "ID", nullable = false)
+    private Integer id;
 
-    @OneToMany(fetch= FetchType.LAZY,mappedBy = "role")
-    private List<User> users;
+    @Size(max = 50)
+    @NotNull
+    @Column(name = "ROLE", nullable = false, length = 50)
+    private String role;
 
 }
