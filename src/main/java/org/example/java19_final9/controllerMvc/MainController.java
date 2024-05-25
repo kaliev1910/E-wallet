@@ -47,7 +47,8 @@ public class MainController {
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String sendMoney(
             @RequestParam(name = "receiver") String receiver,
-            @RequestParam(name = "amount") int amount
+            @RequestParam(name = "amount") int amount,
+            @RequestParam(name = "transactionType") int transactionType
     ) {
 
         if (userService.isAccountExists(receiver)) {
@@ -61,6 +62,7 @@ public class MainController {
                     TransactionToUserDto transactionToUserDto = TransactionToUserDto.builder()
                             .senderAccount(Integer.valueOf(auth.getName()))
                             .receiverAccount(Integer.valueOf(receiver))
+                            .transactionType(transactionType)
                             .amount(amount)
                             .build();
                     transactionService.saveUserPayment(transactionToUserDto);

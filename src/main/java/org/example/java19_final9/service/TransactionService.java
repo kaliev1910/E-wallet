@@ -1,11 +1,11 @@
 package org.example.java19_final9.service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.java19_final9.dto.TransactionToUserDto;
 import org.example.java19_final9.model.Transaction;
 import org.example.java19_final9.model.User;
 import org.example.java19_final9.repository.TransactionRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.example.java19_final9.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +22,10 @@ public class TransactionService {
     private final UserService userService;
 
     public void saveUserPayment(TransactionToUserDto transactionToUserDto) {
-        if (transactionToUserDto.getTransactionType()==1){
+        if (transactionToUserDto.getTransactionType() == 1) {
             Transaction transaction = Transaction.builder()
-                    .sender(userRepository.getUserById(transactionToUserDto.getSenderAccount()))
-
-                    .destinationAccount(Integer.parseInt( userRepository.getUserById(transactionToUserDto.getSenderAccount()).getAccount()))
+                    .sender(userRepository.findUserByAccount(transactionToUserDto.getSenderAccount().toString()).get())
+                    .destinationAccount(Integer.parseInt(userRepository.findUserByAccount(transactionToUserDto.getSenderAccount().toString()).get().getAccount()))
                     .amount(transactionToUserDto.getAmount())
                     .actDate(new Timestamp(System.currentTimeMillis()))
                     .build();

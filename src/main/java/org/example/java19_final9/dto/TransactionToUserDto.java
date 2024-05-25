@@ -11,6 +11,7 @@ public class TransactionToUserDto {
     private Integer senderAccount;
     private int transactionType;
     private Integer receiverAccount;
+
     private int amount;
     private Timestamp actDate;
 }

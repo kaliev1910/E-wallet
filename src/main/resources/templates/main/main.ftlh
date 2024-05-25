@@ -26,6 +26,12 @@
                                            required>
                                 </div>
                                 <div class="form-group">
+                                    <label for=""><@spring.message 'amount'/> :</label>
+                                    <input type="number" class="form-control" id="transactionType" name="transactionType"
+                                           placeholder="<@spring.message 'amount'/>" required
+                                           min="1" max="2">
+                                </div>
+                                <div class="form-group">
                                     <label for="amount"><@spring.message 'amount'/> :</label>
                                     <input type="number" class="form-control" id="amount" name="amount"
                                            placeholder="<@spring.message 'amount'/>" required
