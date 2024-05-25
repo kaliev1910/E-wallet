@@ -3,7 +3,7 @@
 <@main.layout>
 
     <div class="container mt-5">
-        <form  action="/service/${serviceId}" method="post" id="paymentForm" name="payment">
+        <form onsubmit="submitForm(event)" id="paymentForm" name="payment">
             <#if _csrf??>
                 <input type="hidden" id="csrfToken" name="${(_csrf.parameterName)!'csrf-param-name'}"
                        value="${(_csrf.token)!'csrf-token'}"/>
@@ -24,6 +24,38 @@
             <label for="subscribe" class="form-label">No subscription? <a href="/service/${service.id}/subscribe">Subscribe</a></label>
         </div>
     </div>
+
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+
+            const form = document.getElementById('paymentForm');
+            const formData = new FormData(form);
+
+            const data = {
+                providerId: formData.get('providerId'),
+                balance: formData.get('balance'),
+                phone: formData.get('phone')
+            };
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.getElementById('csrfToken').value
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        return response.json();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
 
 
 
