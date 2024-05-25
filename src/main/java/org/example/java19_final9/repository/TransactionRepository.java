@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction,Integer> {
     List<Transaction> findTransactionsBySenderId(int senderId);
+
     List<Transaction> findTransactionsBySenderIdOrDestinationAccount(int senderId,int receiverId);
 }
