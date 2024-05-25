@@ -23,28 +23,35 @@ public class TransactionService {
     private final ProviderUserRepository providerUserRepository;
     private final UserService userService;
 
-    public void savePayment(TransactionDto transactionDto) {
+    public boolean savePayment(TransactionDto transactionDto) {
         if (transactionDto.getTransactionType() == 1) {
             Transaction transaction = Transaction.builder()
                     .sender(userRepository.findUserByAccount(transactionDto.getSenderAccount().toString()).get())
                     .destinationAccount(Integer.parseInt(userRepository.findUserByAccount(transactionDto.getSenderAccount().toString()).get().getAccount()))
                     .amount(transactionDto.getAmount())
+                    .transactionType(transactionDto.getTransactionType())
                     .actDate(new Timestamp(System.currentTimeMillis()))
                     .build();
             transactionRepository.save(transaction);
             userService.subMoney(transactionDto.getAmount(), transactionDto.getSenderAccount().toString(), transactionDto.getReceiverAccount().toString());
-        }
-        else if (transactionDto.getTransactionType() == 2) {
-            Transaction transaction = Transaction.builder()
-                    .sender(userRepository.findUserByAccount(transactionDto.getSenderAccount().toString()).get())
-                    .destinationAccount(providerUserRepository.findByUserPhone(transactionDto.getReceiverAccount()).get().getUserPhone())
-                    .amount(transactionDto.getAmount())
-                    .actDate(new Timestamp(System.currentTimeMillis()))
-                    .build();
-            transactionRepository.save(transaction);
-            userService.subMoneyForProvider(transactionDto.getAmount(), transactionDto.getSenderAccount().toString(), transactionDto.getReceiverAccount().toString());
-        }
+            return true;
+        } else if (transactionDto.getTransactionType() == 2) {
+            if (providerUserRepository.findByUserPhone(transactionDto.getReceiverAccount()).isPresent()) {
+                Transaction transaction = Transaction.builder()
+                        .sender(userRepository.findUserByAccount(transactionDto.getSenderAccount().toString()).get())
+                        .destinationAccount(providerUserRepository.findByUserPhone(transactionDto.getReceiverAccount()).get().getUserPhone())
+                        .amount(transactionDto.getAmount())
+                        .transactionType(transactionDto.getTransactionType())
+                        .actDate(new Timestamp(System.currentTimeMillis()))
+                        .build();
+                transactionRepository.save(transaction);
+                userService.subMoneyForProvider(transactionDto.getAmount(), transactionDto.getSenderAccount().toString(), transactionDto.getReceiverAccount().toString());
 
+                return true;
+            } else return false;
+
+        }
+        return false;
     }
 
     public List<TransactionDto> getUserTransaction(String account) {
@@ -55,6 +62,7 @@ public class TransactionService {
                         .senderAccount(Integer.valueOf(e.getSender().getAccount()))
                         .receiverAccount(e.getDestinationAccount())
                         .amount(e.getAmount())
+                        .transactionType(e.getTransactionType())
                         .actDate(e.getActDate())
                         .build()
                 ).collect(Collectors.toList());
