@@ -3,7 +3,9 @@ package org.example.java19_final9.controllerMvc;
 import lombok.RequiredArgsConstructor;
 import org.example.java19_final9.dto.PaymentForService;
 import org.example.java19_final9.dto.ProviderUserDto;
+import org.example.java19_final9.dto.TransactionDto;
 import org.example.java19_final9.service.ProviderService;
+import org.example.java19_final9.service.TransactionService;
 import org.example.java19_final9.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProviderController {
     private final ProviderService providerService;
     private final UserService userService;
+    private final TransactionService transactionService;
 
     @GetMapping("/service")
     public String getServices(Model model) {
@@ -61,24 +64,23 @@ public class ProviderController {
     }
 
     @PostMapping("/service/{serviceId}")
-    @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String withdraw(
-            @RequestParam(name = "phone") int phone,
-            @RequestParam(name = "balance") int balance,
-            @PathVariable int serviceId, Model model, Authentication auth
-    ) {
-
+    public String replenish(@PathVariable(name = "serviceId") String providerId,
+            @RequestBody PaymentForService payment, Authentication auth, Model model) {
         int id = userService.getUserByAccount(auth.getName()).get().getId();
-        PaymentForService providerUserDto = PaymentForService.builder()
-                .amount(balance)
-                .providerId(serviceId)
-                .userPhone(phone)
+
+        TransactionDto transaction = TransactionDto.builder()
+                .amount(payment.getBalance())
+                .receiverAccount(payment.getPhone())
+                .senderAccount(Integer.parseInt(userService.getUserByAccount(auth.getName()).get().getAccount()))
+                .transactionType(2)
                 .build();
-        String response = providerService.replenishProviderUser(providerUserDto);
+        String response = providerService.replenishProviderUser(payment);
+
+        transactionService.savePayment(transaction);
         model.addAttribute("response", response);
         return "redirect:/profile";
-
     }
+
 
 
 }

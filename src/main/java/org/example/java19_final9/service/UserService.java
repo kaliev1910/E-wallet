@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.java19_final9.dto.UserDto;
 import org.example.java19_final9.enums.AccountType;
 import org.example.java19_final9.model.User;
+import org.example.java19_final9.repository.ProviderUserRepository;
 import org.example.java19_final9.repository.RoleRepository;
 import org.example.java19_final9.repository.UserRepository;
 import org.example.java19_final9.util.Utility;
@@ -33,10 +34,11 @@ public class UserService {
     private final RoleService roleService;
     private final EmailService emailService;
     private final RoleRepository roleRepository;
+    private final ProviderUserRepository providerUserRepository;
 
 
     public List<UserDto> getAllUsers() {
-        log.info("Gol all users");
+        log.info("Got all users");
         List<User> users = userRepository.findAll();
         List<UserDto> userDtos = users.stream()
                 .map(e -> UserDto.builder()
@@ -58,6 +60,16 @@ public class UserService {
         int balance = userRepository.findUserByAccount(account).get().getBalance();
         int total = balance - amount;
         int receiverBalance = userRepository.findUserByAccount(receiverAccount).get().getBalance();
+        int receiverTotal = receiverBalance + amount;
+        userRepository.updateBalanceByAccount(account, total);
+        System.out.println();
+        userRepository.updateBalanceByAccount(receiverAccount, receiverTotal);
+
+    }
+    public void subMoneyForProvider(int amount, String account, String receiverAccount) {
+        int balance = userRepository.findUserByAccount(account).get().getBalance();
+        int total = balance - amount;
+        int receiverBalance = providerUserRepository.findByUserPhone(Integer.parseInt(receiverAccount)).get().getBalance();
         int receiverTotal = receiverBalance + amount;
         userRepository.updateBalanceByAccount(account, total);
         System.out.println();

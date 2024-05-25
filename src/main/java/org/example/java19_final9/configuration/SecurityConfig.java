@@ -1,5 +1,6 @@
 package org.example.java19_final9.configuration;
 
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,14 +19,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
 
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+//                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(form -> form
@@ -43,11 +44,14 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
 
 
-                );
+                )
+                .exceptionHandling(handle -> handle
+                        .accessDeniedPage("/error")
+
+                )
+        ;
+
         return http.build();
     }
-
-
-
 
 }

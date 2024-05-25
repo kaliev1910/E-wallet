@@ -11,6 +11,7 @@
                     <th>Sender</th>
                     <th>Receiver</th>
                     <th>Sum</th>
+                    <th>Type</th>
                     <th>Date</th>
                     <th>Action</th>
                 </tr>
@@ -21,9 +22,17 @@
                         <td>${transaction.senderAccount}</td>
                         <td>${transaction.receiverAccount}</td>
                         <td>${transaction.amount} som</td>
+                        <td>
+                            <#if transaction.transactionType == 1>
+                                <a href="#" id="blue" class="btn btn-primary">To User</a>
+                            <#else >
+                                <a href="#" id="blue" class="btn btn-success">To Provider</a>
+
+                            </#if>
+                        </td>
                         <td>${transaction.actDate}</td>
                         <td>
-                            <#if transaction.senderAccount == user.account>
+                            <#if transaction.senderAccount?c == user.account>
                                 <a href="#" id="blue" class="btn btn-primary">Debit</a>
                             <#else>
                                 <a href="#" id="green" class="btn btn-success">Transfer</a>

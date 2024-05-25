@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.java19_final9.dto.TransactionDto;
 import org.example.java19_final9.model.Transaction;
 import org.example.java19_final9.model.User;
+import org.example.java19_final9.repository.ProviderUserRepository;
 import org.example.java19_final9.repository.TransactionRepository;
 import org.example.java19_final9.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
+    private final ProviderUserRepository providerUserRepository;
     private final UserService userService;
 
     public void savePayment(TransactionDto transactionDto) {
@@ -33,7 +35,14 @@ public class TransactionService {
             userService.subMoney(transactionDto.getAmount(), transactionDto.getSenderAccount().toString(), transactionDto.getReceiverAccount().toString());
         }
         else if (transactionDto.getTransactionType() == 2) {
-
+            Transaction transaction = Transaction.builder()
+                    .sender(userRepository.findUserByAccount(transactionDto.getSenderAccount().toString()).get())
+                    .destinationAccount(providerUserRepository.findByUserPhone(transactionDto.getReceiverAccount()).get().getUserPhone())
+                    .amount(transactionDto.getAmount())
+                    .actDate(new Timestamp(System.currentTimeMillis()))
+                    .build();
+            transactionRepository.save(transaction);
+            userService.subMoneyForProvider(transactionDto.getAmount(), transactionDto.getSenderAccount().toString(), transactionDto.getReceiverAccount().toString());
         }
 
     }

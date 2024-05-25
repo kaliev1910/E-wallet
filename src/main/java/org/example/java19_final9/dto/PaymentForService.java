@@ -8,8 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class PaymentForService {
-    private int id;
     private int providerId;
-    private int amount;
-    private int userPhone;
+    private int balance;
+    private int phone;
 }

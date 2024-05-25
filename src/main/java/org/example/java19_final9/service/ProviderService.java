@@ -55,9 +55,9 @@ public class ProviderService {
 
     public String replenishProviderUser(PaymentForService payment) {
         ProviderUser providerUser = new ProviderUser();
-        if (providerUserRepository.findByUserPhone(payment.getUserPhone()).isPresent()) {
-            providerUser = providerUserRepository.findByUserPhone(payment.getUserPhone()).get();
-            providerUser.setBalance(providerUser.getBalance() + payment.getAmount());
+        if (providerUserRepository.findByUserPhone(payment.getPhone()).isPresent()) {
+            providerUser = providerUserRepository.findByUserPhone(payment.getPhone()).get();
+            providerUser.setBalance(providerUser.getBalance() + payment.getBalance());
             providerUserRepository.save(providerUser);
             return "success";
         } else {
