@@ -56,7 +56,7 @@ public class TransactionService {
 
     public List<TransactionDto> getUserTransaction(String account) {
         User user = userService.getUserByAccount(account).get();
-        List<Transaction> transactions = transactionRepository.findTransactionsBySenderIdOrDestinationAccount(user.getId(), user.getId());
+        List<Transaction> transactions = transactionRepository.findTransactionsBySenderIdOrDestinationAccount(user.getId(),Integer.parseInt( user.getAccount()));
         return transactions.stream()
                 .map(e -> TransactionDto.builder()
                         .senderAccount(Integer.valueOf(e.getSender().getAccount()))
